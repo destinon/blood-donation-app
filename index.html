@@ -9,34 +9,27 @@
            1. CSS Variables - Theme Management
            ========================================= */
         :root {
-            /* Primary Theme Colors (Reddish Maroon - Lighter Shades) */
             --maroon-dark: #800000;
             --maroon-mid: #b30000;
             --maroon-accent: #e60000; 
             
-            /* Text & UI Colors */
             --bg-base: #ffffff;
             --bg-offset: #f7f3f3;
             --text-primary: #333333;
             --text-secondary: #555555;
             
-            /* Glassmorphism Defaults */
             --glass-bg: rgba(255, 255, 255, 0.4);
             --glass-border: rgba(255, 255, 255, 0.5);
             
-            /* UI Elements */
             --input-bg: rgba(255, 255, 255, 0.6);
             --btn-text: #ffffff;
             
-            /* Animation Blobs (Richer, fluid red) */
             --blob-color: rgba(204, 0, 0, 0.65);
             --blob-color-alt: rgba(255, 51, 51, 0.5); 
             
-            /* Shadows */
             --card-shadow: 0 8px 32px 0 rgba(102, 0, 0, 0.2);
         }
 
-        /* Dark Theme Variables */
         [data-theme="dark"] {
             --bg-base: #1a0000;
             --bg-offset: #2d0000;
@@ -124,11 +117,9 @@
             transition: max-width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* Custom Scrollbar for Registration Form */
         .app-container::-webkit-scrollbar { width: 6px; }
         .app-container::-webkit-scrollbar-thumb { background: var(--maroon-mid); border-radius: 10px; }
 
-        /* Smooth reveal classes */
         .hidden { display: none !important; }
         .fade-in { animation: fadeIn 0.4s ease forwards; }
         
@@ -137,7 +128,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Header / Logo Section */
         .logo-area {
             text-align: center;
             margin-bottom: 30px;
@@ -226,7 +216,6 @@
             box-shadow: 0 0 0 3px rgba(230, 0, 0, 0.2);
         }
 
-        /* Buttons */
         .primary-btn {
             width: 100%;
             padding: 16px;
@@ -247,7 +236,6 @@
             box-shadow: 0 8px 25px rgba(204, 0, 0, 0.5);
         }
 
-        /* Links */
         .extra-links {
             display: flex;
             justify-content: space-between;
@@ -262,9 +250,11 @@
             text-align: center;
             margin-top: 20px;
             font-size: 13px;
+            cursor: pointer;
+            color: var(--maroon-mid);
+            font-weight: 600;
         }
 
-        /* Settings Toggle */
         .settings-panel { position: absolute; top: 20px; right: 20px; z-index: 100; }
         .theme-toggle {
             background: var(--glass-bg); border: 1px solid var(--glass-border);
@@ -275,21 +265,20 @@
 </head>
 <body>
 
-    <!-- Dynamic Lava Lamp Background -->
     <div class="lava-background">
         <div class="blob"></div><div class="blob"></div><div class="blob"></div>
         <div class="blob"></div><div class="blob"></div>
     </div>
 
-    <!-- Theme Settings Mockup -->
     <div class="settings-panel">
         <button class="theme-toggle" onclick="toggleTheme()" id="themeToggleButton">🌓 Change Theme</button>
     </div>
 
-    <!-- Main Application Container -->
     <div class="app-container" id="appContainer">
         
         <div class="logo-area" onclick="resetToHome()">
+            <!-- Using the local bloodlogo.jpeg here -->
+            <img src="bloodlogo.jpeg" alt="BloodConnect Logo" style="width: 85px; height: auto; border-radius: 12px; margin-bottom: 12px; background-color: #ffffff; padding: 5px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
             <h1>BloodConnect</h1>
             <p id="subTitle">Select your role to continue</p>
         </div>
@@ -298,13 +287,13 @@
         <div id="loginView" class="fade-in">
             <div class="role-prompt" id="rolePrompt">I am a...</div>
             <div class="role-tabs">
-                <div class="role-tab" id="tabDonor" onclick="selectRole('donor', this)">Donor</div>
+                <div class="role-tab active" id="tabDonor" onclick="selectRole('donor', this)">Donor</div>
                 <div class="role-tab" id="tabHospital" onclick="selectRole('hospital', this)">Hospital</div>
                 <div class="role-tab" id="tabAdmin" onclick="selectRole('admin', this)">Admin</div>
             </div>
 
-            <!-- Initially Hidden Login Form -->
-            <form id="loginForm" class="hidden" onsubmit="event.preventDefault();">
+            <!-- Login Form -->
+            <form id="loginForm" onsubmit="handleLogin(event)">
                 <div class="form-group">
                     <label id="userIdLabel">Application ID / Mobile Number</label>
                     <input type="text" id="userIdInput" required>
@@ -316,12 +305,12 @@
                 <button type="submit" class="primary-btn">Secure Sign In</button>
                 <div class="extra-links">
                     <a href="#">Forgot Password?</a>
-                    <a id="registerLink" class="hidden" onclick="showRegistration()">Sign Up as New Donor</a>
+                    <a id="registerLink" onclick="showRegistration()">Sign Up as New Donor</a>
                 </div>
             </form>
         </div>
 
-        <!-- Section 2: Donor Registration Page (Hidden Initially) -->
+        <!-- Section 2: Donor Registration Page -->
         <div id="registrationView" class="hidden">
             <form id="registrationForm" onsubmit="event.preventDefault(); alert('Registration submitted for Verification!'); resetToHome();">
                 
@@ -400,19 +389,16 @@
 
                 <button type="submit" class="primary-btn">Complete Registration</button>
                 
-                <div class="back-link">
-                    <a onclick="showLogin()">← Back to Login</a>
+                <div class="back-link" onclick="showLogin()">
+                    ← Back to Login
                 </div>
             </form>
         </div>
 
     </div>
 
-    <!-- =========================================
-       7. Interactive Logic
-    ========================================= -->
+    <!-- Interactive Logic -->
     <script>
-        // DOM Elements
         const appContainer = document.getElementById('appContainer');
         const loginView = document.getElementById('loginView');
         const registrationView = document.getElementById('registrationView');
@@ -424,27 +410,23 @@
         const userIdInput = document.getElementById('userIdInput');
         const roleTabs = document.querySelectorAll('.role-tab');
 
-        // Initial State Logic: Select Role First
         function selectRole(role, element) {
-            // Update Active Tab UI
             roleTabs.forEach(tab => tab.classList.remove('active'));
             element.classList.add('active');
 
-            // Reveal the login form smoothly
             loginForm.classList.remove('hidden');
             loginForm.classList.add('fade-in');
             rolePrompt.innerText = `Sign in to your ${role.charAt(0).toUpperCase() + role.slice(1)} account`;
 
-            // Adjust form based on role architecture
             if (role === 'donor') {
                 userIdLabel.innerText = 'Application ID / Mobile Number';
                 userIdInput.placeholder = 'Enter ID or Mobile';
                 regLink.innerText = 'Sign Up as New Donor';
-                regLink.classList.remove('hidden'); // Show Sign Up only for donor
+                regLink.classList.remove('hidden');
             } else if (role === 'hospital') {
                 userIdLabel.innerText = 'Hospital Registration ID';
                 userIdInput.placeholder = 'Enter Hospital ID';
-                regLink.classList.add('hidden'); // Hospitals registered by admin
+                regLink.classList.add('hidden');
             } else if (role === 'admin') {
                 userIdLabel.innerText = 'Admin Username';
                 userIdInput.placeholder = 'Enter Admin ID';
@@ -452,37 +434,39 @@
             }
         }
 
-        // Switch to Donor Registration View
+        // Redirect Logic to Donor Page
+        function handleLogin(event) {
+            event.preventDefault();
+            const activeRole = document.querySelector('.role-tab.active').innerText.toLowerCase();
+            
+            if (activeRole === 'donor') {
+                window.location.href = 'donor.html';
+            } else {
+                alert(activeRole.charAt(0).toUpperCase() + activeRole.slice(1) + ' dashboard is under construction.');
+            }
+        }
+
         function showRegistration() {
             loginView.classList.add('hidden');
             registrationView.classList.remove('hidden');
             registrationView.classList.add('fade-in');
-            
-            // Expand card slightly to fit two columns comfortably
             appContainer.style.maxWidth = "600px";
             subTitle.innerText = "Join the BloodConnect Network";
         }
 
-        // Switch back to Login View
         function showLogin() {
             registrationView.classList.add('hidden');
             loginView.classList.remove('hidden');
             loginView.classList.add('fade-in');
-            
-            // Revert card size
             appContainer.style.maxWidth = "450px";
             subTitle.innerText = "Select your role to continue";
         }
 
-        // Reset to initial page load state (Clicking Logo)
         function resetToHome() {
             showLogin();
-            loginForm.classList.add('hidden');
-            roleTabs.forEach(tab => tab.classList.remove('active'));
-            rolePrompt.innerText = "I am a...";
+            document.getElementById('tabDonor').click();
         }
 
-        // Theme Toggle Logic
         function toggleTheme() {
             const currentTheme = document.documentElement.getAttribute('data-theme');
             const newTheme = (currentTheme === 'dark') ? 'light' : 'dark';
